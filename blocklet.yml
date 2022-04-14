@@ -1,6 +1,6 @@
-name: lottery-util
-title: lottery-util
-description: A Blocklet DAPP blocklet
+name: WeLucky
+title: WeLucky
+description: lottery util
 keywords:
   - blocklet
   - react
@@ -63,5 +63,6 @@ environments:
     default: https://beta.network.arcblockio.cn/api/
     secure: false
 capabilities: {}
-screenshots: []
+screenshots: 
+  - home.png
 children: []

@@ -10,6 +10,8 @@ const fallback = require('express-history-api-fallback');
 const { name, version } = require('../package.json');
 const logger = require('./libs/logger');
 
+const authRoute = require('./routes/auth');
+
 const app = express();
 
 app.set('trust proxy', true);
@@ -18,6 +20,7 @@ app.use(express.json({ limit: '1 mb' }));
 app.use(express.urlencoded({ extended: true, limit: '1 mb' }));
 
 const router = express.Router();
+authRoute.init(router);
 router.use('/api', require('./routes'));
 
 const isDevelopment = process.env.NODE_ENV === 'development';

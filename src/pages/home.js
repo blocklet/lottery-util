@@ -15,6 +15,7 @@ import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/core/styles';
 import { SessionProvider, useSessionContext } from '../contexts/session';
 import get from 'lodash/get';
+import Divider from '@material-ui/core/Divider';
 
 import axios from 'axios';
 
@@ -49,25 +50,21 @@ function randomNum(minNum, maxNum) {
 }
 
 var userRows = [
-  createUserData('David', '0x12345678945646'),
-  createUserData('Petter', '0xADASDCEOKMLXMLKS'),
-  createUserData('Tony', '0xasd21sadxc56awr235sc1'),
-  createUserData('Linda', '0xzxcs5d41rwe5d4vx1asdad'),
-  createUserData('Join', '0xxc21kov4utf349jnevi3fetf4'),
-  createUserData('Steven', '0x123sasok34kmfvklsmfk2p3r'),
-  createUserData('Keven', '0xasd1d7ssg4sd4df8234rdfcsd'),
-  createUserData('Snow', '0xcvergdfgv34414t454y5'),
-  createUserData('White', '0xc23fsdkvop5hoplv543fvls'),
-  createUserData('Blues', '0xc34rdv44644vs34oxcpvser3'),
-  createUserData('Lee', '0x124cxvwkpktl3dslc65ui7tj67'),
-  createUserData('Jay', '0x34cvwe45t5very545df56vsef34'),
-  createUserData('Faker', '0xscw3r4cs564dg344t45vdsg34'),
+  createUserData('David', 'z1aU69jJBst6kajCdvpxJ87exNUneKNUT1x'),
+  createUserData('Petter', 'zNKtNT5wZFGUeMAbyyL9qLXgMdcvSy7AdhQt'),
+  createUserData('Tony', 'z1YDp1sfLjYbe9YRnGge6VVspwANA2DY19e'),
+  createUserData('Linda', 'z1ZCfeN5hTAKqqB2ghv7KfP74jKZvbczXQX'),
+  createUserData('Join', 'z1oefFSpVMGBFkgXFebBrrc3SeAF9jejLFJ'),
+  createUserData('Steven', 'z1oW4r4dmUDECWhCFjpH3ssgDX64wZShNte'),
+  createUserData('Keven', 'z1fZA74z1bbdSPC4tW58LiFuWHSWgHiihsU'),
+  createUserData('Snow', 'z1jXrkzqQCGCBHjJs4papw1UGB1mm7LJrFr'),
+  createUserData('White', 'z1cQvqLWXsJ8JwxbgZ2GYn2atLJhKTqGjvB'),
 ];
 
 var prizeRows = [
-  createPrizeData('一等奖', '10000', '1'),
-  createPrizeData('二等奖', '5000', '2'),
-  createPrizeData('三等奖', '2000', '5'),
+  createPrizeData('一等奖', '100', '1'),
+  createPrizeData('二等奖', '50', '2'),
+  createPrizeData('三等奖', '20', '5'),
 ];
 
 var winUsers = [];
@@ -81,6 +78,7 @@ export default function Home() {
   const [curPrize, setCurPrize] = React.useState(createPrizeData('', '', ''));
   const [prizeDialogOpen, setPrizeDialogOpen] = React.useState(false);
   const [openConnect, setOpenConnect] = React.useState(false);
+  const { session } = useSessionContext();
 
   const handleClickCheck = (name) => {
     const prize = prizes.find((item) => item.name == name);
@@ -173,8 +171,11 @@ export default function Home() {
       return;
     }
 
-    // sendedUsers = [user, ...sendedUsers];
     setOpenConnect(true);
+  };
+
+  const handleSendSuccess = (user) => {
+    sendedUsers = [user, ...sendedUsers];
   };
 
   const handleCloseSend = (event) => {
@@ -183,6 +184,18 @@ export default function Home() {
 
   return (
     <div>
+      <Box mx="auto" display="flex" justifyContent={'space-between'} alignItems={'center'}>
+        <Box p={1}>
+          <h2>WeLucky</h2>
+        </Box>
+
+        <Box p={1}>
+          <SessionProvider>
+            <SessionManager session={session} showRole />
+          </SessionProvider>
+        </Box>
+      </Box>
+
       <PrizeTable
         prizes={prizes}
         onCheck={handleClickCheck}
@@ -203,20 +216,27 @@ export default function Home() {
         popup
         open={openConnect}
         action="sendPrize"
+        extraParams={{ amount: curPrize.amount, toAddress: curWinUser.address, winName: curWinUser.name }}
         checkFn={axios.get}
         onClose={() => handleCloseSend()}
-        onSuccess={() => (window.location.href = '/profile')}
+        onSuccess={() => handleSendSuccess(curWinUser)}
         messages={{
           title: 'login',
           scan: 'Scan QR code with DID Wallet',
-          confirm: 'Confirm login on your DID Wallet',
-          success: 'You have successfully signed in!',
+          confirm: 'Confirm Send Prize',
+          success: 'You have successfully send prize!',
         }}
         cancelWhenScanned={() => {}}
       />
     </div>
   );
 }
+
+const paperProps = {
+  style: {
+    width: 500,
+  },
+};
 
 function LotteryDialog(props) {
   const { user, prize, onConfirm, open } = props;
@@ -226,14 +246,17 @@ function LotteryDialog(props) {
   };
 
   return (
-    <Dialog aria-labelledby="simple-dialog-title" open={open}>
-      <DialogTitle id="simple-dialog-title">{prize.name}开奖成功</DialogTitle>
-      <Box p={1}>
-        <div>中奖者:{user.name}</div>
+    <Dialog aria-labelledby="simple-dialog-title" open={open} maxWidth={false} PaperProps={paperProps}>
+      <Box mx="auto" p={1}>
+        <DialogTitle id="simple-dialog-title">{prize.name}开奖成功</DialogTitle>
       </Box>
 
       <Box p={1}>
-        <div>账户地址:{user.address}</div>
+        <div>中奖者 : {user.name}</div>
+      </Box>
+
+      <Box p={1}>
+        <div>账户地址 : {user.address}</div>
       </Box>
 
       <Box p={1} mx="auto">
@@ -245,14 +268,8 @@ function LotteryDialog(props) {
   );
 }
 
-const prizeDialogStyles = makeStyles({
-  table: {
-    minWidth: 650,
-  },
-});
 function PrizeDialog(props) {
   const { winUsers, prize, onConfirm, onSend, open } = props;
-  const classes = prizeDialogStyles();
   const handleClickConfirm = () => {
     onConfirm();
   };
@@ -262,19 +279,22 @@ function PrizeDialog(props) {
   };
 
   return (
-    <Dialog aria-labelledby="simple-dialog-title" open={open}>
-      <DialogTitle id="simple-dialog-title">{prize.name}</DialogTitle>
-      <Box p={1}>
-        <div>金额:{prize.amount}</div>
+    <Dialog aria-labelledby="simple-dialog-title" open={open} maxWidth={false} PaperProps={paperProps}>
+      <Box mx="auto" p={1}>
+        <DialogTitle id="simple-dialog-title">{prize.name}</DialogTitle>
       </Box>
 
       <Box p={1}>
-        <div>数量:{prize.number}</div>
+        <div>金额 : {prize.amount}</div>
+      </Box>
+
+      <Box p={1}>
+        <div>数量 : {prize.number}</div>
       </Box>
 
       {typeof winUsers != 'undefined' ? (
         <TableContainer component={Paper}>
-          <Table className={classes.table} size="small" aria-label="a dense table">
+          <Table size="small" aria-label="a dense table">
             <TableHead>
               <TableRow>
                 <TableCell>姓名</TableCell>

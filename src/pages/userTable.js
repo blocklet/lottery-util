@@ -24,6 +24,16 @@ import Box from '@material-ui/core/Box';
 import TablePagination from '@material-ui/core/TablePagination';
 import CropFreeIcon from '@material-ui/icons/CropFree';
 
+import axios from 'axios';
+
+// import each module individually
+import DidAddress from '@arcblock/did-connect/lib/Address';
+import DidConnect from '@arcblock/did-connect/lib/Connect';
+import DidAvatar from '@arcblock/did-connect/lib/Avatar';
+import DidButton from '@arcblock/did-connect/lib/Button';
+import DidLogo from '@arcblock/did-connect/lib/Logo';
+import SessionManager from '@arcblock/did-connect/lib/SessionManager';
+
 export default function UserTable(props) {
   const classes = useStyles();
   const { users, onAddClick, onDeleteClick } = props;
@@ -32,6 +42,7 @@ export default function UserTable(props) {
   const [open, setOpen] = React.useState(false);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [openConnect, setOpenConnect] = React.useState(false);
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
@@ -44,10 +55,6 @@ export default function UserTable(props) {
 
   const handleAddClick = (event) => {
     setOpen(true);
-  };
-
-  const handleScanClick = (event) => {
-    console.log(12321312323123123);
   };
 
   const handleClose = (value) => {
@@ -88,6 +95,16 @@ export default function UserTable(props) {
 
     setSelected(newSelected);
   };
+
+  const handleScanClick = (event) => {
+    setOpenConnect(true);
+  };
+
+  const handleCloseScan = (event) => {
+    setOpenConnect(false);
+  };
+
+  const handleSignUpSuccess = () => {};
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
@@ -158,6 +175,21 @@ export default function UserTable(props) {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
+      <DidConnect
+        popup
+        open={openConnect}
+        action="signUp"
+        checkFn={axios.get}
+        onClose={() => handleCloseScan()}
+        onSuccess={() => handleSignUpSuccess}
+        messages={{
+          title: 'login',
+          scan: 'Scan QR code with DID Wallet',
+          confirm: 'Confirm sign up',
+          success: 'You have successfully sign up!',
+        }}
+        cancelWhenScanned={() => {}}
+      />
     </div>
   );
 }
@@ -291,8 +323,19 @@ UserTableHead.propTypes = {
   rowCount: PropTypes.number.isRequired,
 };
 
+const paperProps = {
+  style: {
+    width: 400,
+  },
+};
+
+const textProps = {
+  style: {
+    width: 300,
+  },
+};
+
 function AddUserDialog(props) {
-  const classes = useStyles();
   const { onClose, onConfirm, open } = props;
   const [name, setName] = React.useState('');
   const [address, setAddress] = React.useState('');
@@ -310,23 +353,40 @@ function AddUserDialog(props) {
   };
 
   return (
-    <Dialog onClose={onClose} aria-labelledby="simple-dialog-title" open={open}>
-      <DialogTitle id="simple-dialog-title">添加抽奖用户</DialogTitle>
-      <Box p={1}>
-        <TextField id="outlined-basic" label="姓名" value={name} variant="outlined" onChange={handleChangeName} />
+    <Dialog
+      onClose={onClose}
+      aria-labelledby="simple-dialog-title"
+      open={open}
+      maxWidth={false}
+      PaperProps={paperProps}
+    >
+      <Box mx="auto" p={1}>
+        <DialogTitle id="simple-dialog-title">添加抽奖用户</DialogTitle>
       </Box>
 
-      <Box p={1}>
+      <Box mx="auto" p={1} display="flex">
+        <TextField
+          id="outlined-basic"
+          label="姓名"
+          value={name}
+          variant="outlined"
+          onChange={handleChangeName}
+          InputProps={textProps}
+        />
+      </Box>
+
+      <Box mx="auto" p={1} display="flex">
         <TextField
           id="outlined-basic"
           label="账户地址"
           value={address}
           variant="outlined"
           onChange={handleChangeAddres}
+          InputProps={textProps}
         />
       </Box>
 
-      <Box display="flex" flexDirection="row" p={1} m={1} bgcolor="background.paper">
+      <Box mx="auto" display="flex" flexDirection="row" p={1} m={1}>
         <Box p={1}>
           <Button variant="contained" onClick={onClose}>
             取消

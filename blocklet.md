@@ -1,3 +1,3 @@
-# lottery-util
+# WeLucky
 
-A react template for creating a new blocklet project.
+A Lottery Bloctlet

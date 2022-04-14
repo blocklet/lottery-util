@@ -245,6 +245,18 @@ PrizeTableHead.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
+const paperProps = {
+  style: {
+    width: 300,
+  },
+};
+
+const textProps = {
+  style: {
+    width: 200,
+  },
+};
+
 function AddPrizeDialog(props) {
   const classes = useStyles();
   const { onClose, onConfirm, open } = props;
@@ -269,21 +281,45 @@ function AddPrizeDialog(props) {
   };
 
   return (
-    <Dialog onClose={onClose} aria-labelledby="simple-dialog-title" open={open}>
-      <DialogTitle id="simple-dialog-title">添加奖项</DialogTitle>
-      <Box p={1}>
-        <TextField id="outlined-basic" label="奖项名称" value={name} variant="outlined" onChange={handleChangeName} />
+    <Dialog onClose={onClose} aria-labelledby="simple-dialog-title" open={open} PaperProps={paperProps}>
+      <Box mx="auto" p={1}>
+        <DialogTitle id="simple-dialog-title">添加奖项</DialogTitle>
       </Box>
 
-      <Box p={1}>
-        <TextField id="outlined-basic" label="金额" value={amount} variant="outlined" onChange={handleChangeAmount} />
+      <Box mx="auto" p={1} display="flex">
+        <TextField
+          id="outlined-basic"
+          label="奖项名称"
+          value={name}
+          variant="outlined"
+          onChange={handleChangeName}
+          InputProps={textProps}
+        />
       </Box>
 
-      <Box p={1}>
-        <TextField id="outlined-basic" label="数量" value={number} variant="outlined" onChange={handleChangeNumber} />
+      <Box mx="auto" p={1} display="flex">
+        <TextField
+          id="outlined-basic"
+          label="金额"
+          value={amount}
+          variant="outlined"
+          onChange={handleChangeAmount}
+          InputProps={textProps}
+        />
       </Box>
 
-      <Box display="flex" flexDirection="row" p={1} m={1} bgcolor="background.paper">
+      <Box mx="auto" p={1} display="flex">
+        <TextField
+          id="outlined-basic"
+          label="数量"
+          value={number}
+          variant="outlined"
+          onChange={handleChangeNumber}
+          InputProps={textProps}
+        />
+      </Box>
+
+      <Box display="flex" mx="auto" p={1}>
         <Box p={1}>
           <Button variant="contained" onClick={onClose}>
             取消
